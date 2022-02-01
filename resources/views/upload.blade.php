@@ -30,11 +30,15 @@
 
     <div class="form">
 
-        <div class="jumbotron">
-
-            <h1>Upload</h1>
-
-        </div>
+        <form action="{{ route('processFile') }}" class="form row" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group col-md-6">
+                <input type="file" class="form-control" id="csvFile" name="csvFile">
+            </div>
+            <div class="form-group col-md-6">
+                <input type="submit" class="btn btn-info submit">
+            </div>
+        </form>
 
     </div>
 

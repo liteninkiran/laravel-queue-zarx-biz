@@ -21,3 +21,4 @@ Route::get('/', function () {
 
 Route::get('/progress', [ProgressController::class, 'index']);
 Route::get('/upload', [UploadController::class, 'index']);
+Route::post('/upload/file', [UploadController::class, 'uploadAndStore'])->name('processFile');
