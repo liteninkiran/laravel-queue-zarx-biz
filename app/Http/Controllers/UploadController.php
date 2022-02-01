@@ -7,6 +7,6 @@ use Illuminate\Http\Request;
 class UploadController extends Controller
 {
     public function index() {
-        return 'Upload View';
+        return view('upload');
     }
 }
