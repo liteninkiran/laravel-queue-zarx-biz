@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessEmployees;
+use App\Models\JobBatch;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 
 class UploadController extends Controller
 {
@@ -17,7 +21,7 @@ class UploadController extends Controller
      * Upload file and store in database
      *
      * @param Request $request
-     * @return void
+     * @return Redirector
      */
     public function uploadAndStore(Request $request) {
         try {
@@ -44,12 +48,18 @@ class UploadController extends Controller
 
                 $csvData = array_chunk($csvData, 20);
 
+                $batch = Bus::batch([])->dispatch();
+
                 foreach($csvData as $index => $record) {
                     foreach($record as $data) {
                         $employeeData[$index][] = array_combine($header, $data);
                     }
-                    ProcessEmployees::dispatch($employeeData[$index]);
+                    $batch->add(new ProcessEmployees($employeeData[$index]));
                 }
+
+                session()->put('lastBatchId', $batch->id);
+
+                return redirect('/progress?id=' . $batch->id);
             }
         } catch (Exception $e) {
             Log::error($e);
